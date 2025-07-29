@@ -6,8 +6,8 @@ const AddTodo = ({onAdd})=>{
        const handleSubmit = async (e) => {
               e.preventDefault();
               if (!todo) return;
-
               onAdd(todo);
+              setTodo(''); // Clear the input field after adding the todo
        }
        return (
               <form onSubmit={handleSubmit}>

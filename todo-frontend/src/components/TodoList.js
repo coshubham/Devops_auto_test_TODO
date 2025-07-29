@@ -4,21 +4,24 @@ import AddTodo from "./AddTodo";
 import TodoItem from "./TodoItem";
 import BACKEND_URL from "../config/config";
 
-const TodoList = () => {
-       const [todos, setTodos] = useState([]);
-
+const TodoList = ({ initialTodos = [] }) => {
+       const [todos, setTodos] = useState(initialTodos);
+     
        useEffect(() => {
-              const fetchTodos = async () => {
-                     try {
-                            const response = await fetch(`${BACKEND_URL}/get-todo`);
-                            const data = await response.json();
-                            setTodos(data);
-                     } catch (error) {
-                            console.error("Error fetching todos:", error);
-                     }
-              };
-              fetchTodos();
+         if (initialTodos.length === 0) {
+           const fetchTodos = async () => {
+             try {
+               const response = await fetch(`${BACKEND_URL}/get-todo`);
+               const data = await response.json();
+               setTodos(data);
+             } catch (error) {
+               console.error("Error fetching todos:", error);
+             }
+           };
+           fetchTodos();
+         }
        }, []);
+     
 
        const addTodo = async(title) =>{
               try {
@@ -38,7 +41,23 @@ const TodoList = () => {
               }
        }
 
-
+       const deleteTodo = async (id) => {
+              try {
+                const response = await fetch(`http://localhost:3001/api/delete-todo/${id}`, {
+                  method: "DELETE",
+                });
+            
+                if (response.ok) {
+                  setTodos((prev) => prev.filter((todo) => todo._id !== id)); // Remove from UI
+                  console.log("Todo deleted successfully");
+                } else {
+                  console.error("Failed to delete todo");
+                }
+              } catch (error) {
+                console.error("Error deleting todo:", error);
+              }
+            };
+            
 
        return (
               <div>
@@ -47,9 +66,11 @@ const TodoList = () => {
                     <ul>
                      {
                             todos.map( todo => (
-                                <TodoItem key={todo._id} todo={todo}></TodoItem>
-
+                                <TodoItem key={todo._id} todo={todo}
+                                onDelete={() => deleteTodo(todo._id)} // Pass handler
+                                ></TodoItem>
                             ))
+                                 
                      }
                     </ul>
               </div>
