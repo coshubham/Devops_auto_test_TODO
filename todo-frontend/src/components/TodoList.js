@@ -4,24 +4,21 @@ import AddTodo from "./AddTodo";
 import TodoItem from "./TodoItem";
 import BACKEND_URL from "../config/config";
 
-const TodoList = ({ initialTodos = [] }) => {
-       const [todos, setTodos] = useState(initialTodos);
-     
+const TodoList = () => {
+       const [todos, setTodos] = useState([]);
+
        useEffect(() => {
-         if (initialTodos.length === 0) {
-           const fetchTodos = async () => {
-             try {
-               const response = await fetch(`${BACKEND_URL}/get-todo`);
-               const data = await response.json();
-               setTodos(data);
-             } catch (error) {
-               console.error("Error fetching todos:", error);
-             }
-           };
-           fetchTodos();
-         }
+              const fetchTodos = async () => {
+                     try {
+                            const response = await fetch(`${BACKEND_URL}/get-todo`);
+                            const data = await response.json();
+                            setTodos(data);
+                     } catch (error) {
+                            console.error("Error fetching todos:", error);
+                     }
+              };
+              fetchTodos();
        }, []);
-     
 
        const addTodo = async(title) =>{
               try {
